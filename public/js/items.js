@@ -63,6 +63,7 @@ function renderItems(items) {
 
   items.forEach((item) => {
     const row = document.createElement('tr');
+    row.dataset.id = item.id;
     row.innerHTML = `
       <td>${item.name}</td>
       <td>${item.category ?? ''}</td>
@@ -70,10 +71,28 @@ function renderItems(items) {
       <td>${item.purchase_date ?? ''}</td>
       <td>${item.purchase_price ?? ''}</td>
       <td>${item.estimated_value ?? ''}</td>
-      <td><button class="delete-btn" data-id="${item.id}">Delete</button></td>
+      <td>
+        <button class="edit-btn" data-id="${item.id}">Edit</button>
+        <button class="delete-btn" data-id="${item.id}">Delete</button>
+      </td>
     `;
     itemsList.appendChild(row);
   });
+}
+
+function enterEditMode(row, item) {
+  row.innerHTML = `
+    <td><input type="text" class="edit-name" value="${item.name}"></td>
+    <td><input type="text" class="edit-category" value="${item.category ?? ''}"></td>
+    <td><input type="text" class="edit-subcategory" value="${item.subcategory ?? ''}"></td>
+    <td><input type="date" class="edit-date" value="${item.purchase_date ?? ''}"></td>
+    <td><input type="number" step="0.01" class="edit-price" value="${item.purchase_price ?? ''}"></td>
+    <td><input type="number" step="0.01" class="edit-value" value="${item.estimated_value ?? ''}"></td>
+    <td>
+      <button class="save-btn" data-id="${item.id}">Save</button>
+      <button class="cancel-btn">Cancel</button>
+    </td>
+  `;
 }
 
 loadItems();
@@ -134,3 +153,42 @@ document.getElementById('category').addEventListener('change', (event) => {
 
 loadCategoryDropdown();
 loadAllSubcategories();
+
+document.getElementById('items-list').addEventListener('click', async (event) => {
+  const target = event.target;
+  const row = target.closest('tr');
+  const id = target.dataset.id;
+
+  if (target.classList.contains('delete-btn')) {
+    await fetch(`/api/items/${id}`, { method: 'DELETE' });
+    loadItems();
+  }
+
+  if (target.classList.contains('edit-btn')) {
+    const item = allItems.find(i => i.id == id);
+    enterEditMode(row, item);
+  }
+
+  if (target.classList.contains('cancel-btn')) {
+    applyCurrentFilter();
+  }
+
+  if (target.classList.contains('save-btn')) {
+    const updatedItem = {
+      name: row.querySelector('.edit-name').value,
+      category: row.querySelector('.edit-category').value,
+      subcategory: row.querySelector('.edit-subcategory').value,
+      purchase_date: row.querySelector('.edit-date').value,
+      purchase_price: row.querySelector('.edit-price').value,
+      estimated_value: row.querySelector('.edit-value').value
+    };
+
+    await fetch(`/api/items/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(updatedItem)
+    });
+
+    loadItems();
+  }
+});

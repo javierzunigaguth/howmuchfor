@@ -207,3 +207,25 @@ app.post('/api/profile', (req, res) => {
     }
   );
 });
+
+app.put('/api/items/:id', (req, res) => {
+  const { id } = req.params;
+  const { name, category, subcategory, purchase_date, purchase_price, estimated_value } = req.body;
+
+  db.run(
+    `UPDATE items
+     SET name = ?, category = ?, subcategory = ?, purchase_date = ?, purchase_price = ?, estimated_value = ?
+     WHERE id = ?`,
+    [name, category, subcategory, purchase_date, purchase_price, estimated_value, id],
+    function (err) {
+      if (err) {
+        console.error(err.message);
+        res.status(500).json({ message: 'Failed to update item.' });
+      } else if (this.changes === 0) {
+        res.status(404).json({ message: 'Item not found.' });
+      } else {
+        res.json({ message: 'Item updated.' });
+      }
+    }
+  );
+});
