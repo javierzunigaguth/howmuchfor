@@ -1,3 +1,5 @@
+let pieChart;
+
 async function loadDashboard() {
   const profileResponse = await fetch('/api/profile');
   const profile = await profileResponse.json();
@@ -26,6 +28,9 @@ async function loadDashboard() {
   const summaryList = document.getElementById('category-summary-list');
   summaryList.innerHTML = '';
 
+  const categoryLabels = [];
+  const categoryTotals = [];
+
   categories.forEach((cat) => {
     const itemsInCategory = items.filter(item => item.category === cat.name);
 
@@ -43,9 +48,15 @@ async function loadDashboard() {
       <span class="category-total">€${categoryTotal.toFixed(2)}</span>
     `;
     summaryList.appendChild(row);
+
+    if (categoryTotal > 0) {
+      categoryLabels.push(cat.name);
+      categoryTotals.push(categoryTotal);
+    }
   });
 
-  // Items table
+  renderPieChart(categoryLabels, categoryTotals);
+
   const itemsList = document.getElementById('dashboard-items-list');
   itemsList.innerHTML = '';
 
@@ -60,6 +71,31 @@ async function loadDashboard() {
       <td>${item.estimated_value ?? ''}</td>
     `;
     itemsList.appendChild(row);
+  });
+}
+
+function renderPieChart(labels, values) {
+  const ctx = document.getElementById('category-pie-chart');
+
+  if (pieChart) {
+    pieChart.destroy();
+  }
+
+  pieChart = new Chart(ctx, {
+    type: 'pie',
+    data: {
+      labels: labels,
+      datasets: [{
+        data: values,
+        backgroundColor: [
+          '#27ae60', '#2980b9', '#e67e22', '#8e44ad',
+          '#c0392b', '#16a085', '#f39c12', '#2c3e50'
+        ]
+      }]
+    },
+    options: {
+      responsive: true
+    }
   });
 }
 

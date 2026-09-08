@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>HowMuchFor - Dashboard</title>
   <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
   <div class="sidebar">
@@ -21,10 +22,17 @@
         <p>An overview of everything you own.</p>
     </header>
 
+    <div class="dashboard-top">
+
     <div id="total-value-card">
       <p>Total estimated resale value</p>
       <h2 id="total-value">Loading...</h2>
     </div>
+
+    <div id="pie-chart-card">
+      <canvas id="category-pie-chart"></canvas>
+    </div>
+  </div>
 
     <h2>By Category</h2>
     <div id="category-summary-list"></div>
