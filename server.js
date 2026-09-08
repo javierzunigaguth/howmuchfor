@@ -229,3 +229,43 @@ app.put('/api/items/:id', (req, res) => {
     }
   );
 });
+
+app.put('/api/categories/:id', (req, res) => {
+  const { id } = req.params;
+  const { name, icon } = req.body;
+
+  db.run(
+    `UPDATE categories SET name = ?, icon = ? WHERE id = ?`,
+    [name, icon, id],
+    function (err) {
+      if (err) {
+        console.error(err.message);
+        res.status(500).json({ message: 'Failed to update category. Name may already exist.' });
+      } else if (this.changes === 0) {
+        res.status(404).json({ message: 'Category not found.' });
+      } else {
+        res.json({ message: 'Category updated.' });
+      }
+    }
+  );
+});
+
+app.put('/api/subcategories/:id', (req, res) => {
+  const { id } = req.params;
+  const { name, category_id } = req.body;
+
+  db.run(
+    `UPDATE subcategories SET name = ?, category_id = ? WHERE id = ?`,
+    [name, category_id, id],
+    function (err) {
+      if (err) {
+        console.error(err.message);
+        res.status(500).json({ message: 'Failed to update subcategory.' });
+      } else if (this.changes === 0) {
+        res.status(404).json({ message: 'Subcategory not found.' });
+      } else {
+        res.json({ message: 'Subcategory updated.' });
+      }
+    }
+  );
+});
