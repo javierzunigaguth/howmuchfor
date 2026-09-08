@@ -20,8 +20,19 @@ db.run(`
   )
 `);
 
+db.run(`DROP TABLE IF EXISTS category_subcategories`);
+db.run(`DROP TABLE IF EXISTS subcategories`);
+db.run(`DROP TABLE IF EXISTS categories`);
+
 db.run(`
   CREATE TABLE IF NOT EXISTS categories (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL UNIQUE
+  )
+`);
+
+db.run(`
+  CREATE TABLE IF NOT EXISTS subcategories (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
     icon TEXT
@@ -29,11 +40,12 @@ db.run(`
 `);
 
 db.run(`
-  CREATE TABLE IF NOT EXISTS subcategories (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL,
+  CREATE TABLE IF NOT EXISTS category_subcategories (
     category_id INTEGER NOT NULL,
-    FOREIGN KEY (category_id) REFERENCES categories(id)
+    subcategory_id INTEGER NOT NULL,
+    PRIMARY KEY (category_id, subcategory_id),
+    FOREIGN KEY (category_id) REFERENCES categories(id),
+    FOREIGN KEY (subcategory_id) REFERENCES subcategories(id)
   )
 `);
 
