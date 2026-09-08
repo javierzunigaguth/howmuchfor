@@ -86,3 +86,36 @@ app.post('/api/categories', (req, res) => {
     }
   );
 });
+
+app.get('/api/subcategories', (req, res) => {
+  db.all(
+    `SELECT subcategories.id, subcategories.name, categories.name AS category_name, categories.id AS category_id
+     FROM subcategories
+     JOIN categories ON subcategories.category_id = categories.id`,
+    [],
+    (err, rows) => {
+      if (err) {
+        res.status(500).json({ message: 'Failed to fetch subcategories.' });
+      } else {
+        res.json(rows);
+      }
+    }
+  );
+});
+
+app.post('/api/subcategories', (req, res) => {
+  const { name, category_id } = req.body;
+
+  db.run(
+    `INSERT INTO subcategories (name, category_id) VALUES (?, ?)`,
+    [name, category_id],
+    function (err) {
+      if (err) {
+        console.error(err.message);
+        res.status(500).json({ message: 'Failed to add subcategory.' });
+      } else {
+        res.json({ message: `Subcategory "${name}" added.`, id: this.lastID });
+      }
+    }
+  );
+});

@@ -78,3 +78,9 @@ div.content {
 .category-icon {
   font-size: 1.4rem;
 }
+
+.subcategory-parent {
+  color: #888;
+  font-size: 0.85rem;
+  margin-left: 6px;
+}
