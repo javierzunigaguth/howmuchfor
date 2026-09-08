@@ -84,3 +84,33 @@ div.content {
   font-size: 0.85rem;
   margin-left: 6px;
 }
+
+.category-summary-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 10px 16px;
+  margin-bottom: 8px;
+}
+
+.category-icon {
+  font-size: 1.4rem;
+}
+
+.category-name {
+  font-weight: 500;
+  flex-grow: 1;
+}
+
+.category-count {
+  color: #888;
+  font-size: 0.9rem;
+}
+
+.category-total {
+  font-weight: bold;
+  color: #27ae60;
+}

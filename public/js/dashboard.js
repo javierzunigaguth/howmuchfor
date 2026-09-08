@@ -1,6 +1,11 @@
 async function loadDashboard() {
-  const response = await fetch('/api/items');
-  const items = await response.json();
+  const [itemsResponse, categoriesResponse] = await Promise.all([
+    fetch('/api/items'),
+    fetch('/api/categories')
+  ]);
+
+  const items = await itemsResponse.json();
+  const categories = await categoriesResponse.json();
 
   const total = items.reduce((sum, item) => {
     const value = parseFloat(item.estimated_value) || 0;
@@ -8,6 +13,29 @@ async function loadDashboard() {
   }, 0);
   document.getElementById('total-value').textContent = `€${total.toFixed(2)}`;
 
+  const summaryList = document.getElementById('category-summary-list');
+  summaryList.innerHTML = '';
+
+  categories.forEach((cat) => {
+    const itemsInCategory = items.filter(item => item.category === cat.name);
+
+    const categoryTotal = itemsInCategory.reduce((sum, item) => {
+      const value = parseFloat(item.estimated_value) || 0;
+      return sum + value;
+    }, 0);
+
+    const row = document.createElement('div');
+    row.className = 'category-summary-row';
+    row.innerHTML = `
+      <span class="category-icon">${cat.icon ?? '📦'}</span>
+      <span class="category-name">${cat.name}</span>
+      <span class="category-count">${itemsInCategory.length} item(s)</span>
+      <span class="category-total">€${categoryTotal.toFixed(2)}</span>
+    `;
+    summaryList.appendChild(row);
+  });
+
+  // Items table
   const itemsList = document.getElementById('dashboard-items-list');
   itemsList.innerHTML = '';
 
