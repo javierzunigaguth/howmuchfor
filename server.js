@@ -16,3 +16,20 @@ app.get('/api/test', (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server is running at http://localhost:${PORT}`);
 });
+
+app.post('/api/items', (req, res) => {
+  const { name, category, subcategory, purchase_date, purchase_price, estimated_value } = req.body;
+
+  db.run(
+    `INSERT INTO items (name, category, subcategory, purchase_date, purchase_price, estimated_value) VALUES (?, ?, ?, ?, ?, ?)`,
+    [name, category, subcategory, purchase_date, purchase_price, estimated_value],
+    function (err) {
+      if (err) {
+        console.error(err.message);
+        res.status(500).json({ message: 'Failed to add item.' });
+      } else {
+        res.json({ message: `Item added with ID ${this.lastID}` });
+      }
+    }
+  );
+});

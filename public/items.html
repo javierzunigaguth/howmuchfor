@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>HowMuchFor - Items</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
   <div class="sidebar">
@@ -19,8 +19,22 @@
   <div class="content">
     <header>
       <h1>Items</h1>
-      <p>Welcome to the items page!</p>
+      <p>Add a new item to your inventory.</p>
     </header>
+
+    <form id="item-form">
+      <input type="text" id="name" placeholder="Item name" required>
+      <input type="text" id="category" placeholder="Category">
+      <input type="text" id="subcategory" placeholder="Subcategory">
+      <input type="date" id="purchase_date">
+      <input type="number" id="purchase_price" placeholder="Purchase price" step="0.01">
+      <input type="number" id="estimated_value" placeholder="Estimated resale value" step="0.01">
+      <button type="submit">Add Item</button>
+    </form>
+
+    <p id="form-status"></p>
   </div>
+
+  <script src="js/items.js"></script>
 </body>
 </html>
