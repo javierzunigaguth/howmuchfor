@@ -119,3 +119,64 @@ app.post('/api/subcategories', (req, res) => {
     }
   );
 });
+
+app.delete('/api/categories/:id', (req, res) => {
+  const { id } = req.params;
+
+  db.get(`SELECT name FROM categories WHERE id = ?`, [id], (err, category) => {
+    if (err || !category) {
+      return res.status(404).json({ message: 'Category not found.' });
+    }
+
+    db.get(`SELECT COUNT(*) AS count FROM items WHERE category = ?`, [category.name], (err, result) => {
+      if (err) {
+        return res.status(500).json({ message: 'Error checking category usage.' });
+      }
+
+      if (result.count > 0) {
+        return res.status(400).json({
+          message: `Cannot delete "${category.name}": ${result.count} item(s) still use it.`
+        });
+      }
+
+      db.run(`DELETE FROM subcategories WHERE category_id = ?`, [id]);
+      db.run(`DELETE FROM categories WHERE id = ?`, [id], function (err) {
+        if (err) {
+          res.status(500).json({ message: 'Failed to delete category.' });
+        } else {
+          res.json({ message: `Category "${category.name}" deleted.` });
+        }
+      });
+    });
+  });
+});
+
+app.delete('/api/subcategories/:id', (req, res) => {
+  const { id } = req.params;
+
+  db.get(`SELECT name FROM subcategories WHERE id = ?`, [id], (err, subcategory) => {
+    if (err || !subcategory) {
+      return res.status(404).json({ message: 'Subcategory not found.' });
+    }
+
+    db.get(`SELECT COUNT(*) AS count FROM items WHERE subcategory = ?`, [subcategory.name], (err, result) => {
+      if (err) {
+        return res.status(500).json({ message: 'Error checking subcategory usage.' });
+      }
+
+      if (result.count > 0) {
+        return res.status(400).json({
+          message: `Cannot delete "${subcategory.name}": ${result.count} item(s) still use it.`
+        });
+      }
+
+      db.run(`DELETE FROM subcategories WHERE id = ?`, [id], function (err) {
+        if (err) {
+          res.status(500).json({ message: 'Failed to delete subcategory.' });
+        } else {
+          res.json({ message: `Subcategory "${subcategory.name}" deleted.` });
+        }
+      });
+    });
+  });
+});

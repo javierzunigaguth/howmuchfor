@@ -11,10 +11,27 @@ async function loadCategories() {
     card.innerHTML = `
       <span class="category-icon">${cat.icon ?? '📦'}</span>
       <span class="category-name">${cat.name}</span>
+      <button class="delete-category-btn" data-id="${cat.id}">✕</button>
     `;
     list.appendChild(card);
   });
 }
+
+document.getElementById('categories-list').addEventListener('click', async (event) => {
+  if (event.target.classList.contains('delete-category-btn')) {
+    const id = event.target.dataset.id;
+
+    const response = await fetch(`/api/categories/${id}`, {
+      method: 'DELETE'
+    });
+
+    const result = await response.json();
+    document.getElementById('category-status').textContent = result.message;
+
+    loadCategories();
+    loadParentCategoryDropdown();
+  }
+});
 
 document.getElementById('category-form').addEventListener('submit', async (event) => {
   event.preventDefault();
@@ -68,6 +85,7 @@ async function loadSubcategories() {
     card.innerHTML = `
       <span class="category-name">${sub.name}</span>
       <span class="subcategory-parent">(${sub.category_name})</span>
+      <button class="delete-subcategory-btn" data-id="${sub.id}">✕</button>
     `;
     list.appendChild(card);
   });
@@ -96,3 +114,18 @@ document.getElementById('subcategory-form').addEventListener('submit', async (ev
 
 loadParentCategoryDropdown();
 loadSubcategories();
+
+document.getElementById('subcategories-list').addEventListener('click', async (event) => {
+  if (event.target.classList.contains('delete-subcategory-btn')) {
+    const id = event.target.dataset.id;
+
+    const response = await fetch(`/api/subcategories/${id}`, {
+      method: 'DELETE'
+    });
+
+    const result = await response.json();
+    document.getElementById('subcategory-status').textContent = result.message;
+
+    loadSubcategories();
+  }
+});

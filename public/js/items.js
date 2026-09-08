@@ -81,3 +81,56 @@ loadItems();
 document.getElementById('category-filter').addEventListener('change', () => {
   applyCurrentFilter();
 });
+
+let allSubcategories = [];
+
+async function loadCategoryDropdown() {
+  const response = await fetch('/api/categories');
+  const categories = await response.json();
+
+  const select = document.getElementById('category');
+  select.innerHTML = '<option value="" disabled selected>Select category</option>';
+
+  categories.forEach((cat) => {
+    const option = document.createElement('option');
+    option.value = cat.name;
+    option.textContent = `${cat.icon ?? ''} ${cat.name}`;
+    select.appendChild(option);
+  });
+}
+
+async function loadAllSubcategories() {
+  const response = await fetch('/api/subcategories');
+  allSubcategories = await response.json();
+}
+
+function updateSubcategoryDropdown(selectedCategoryName) {
+  const select = document.getElementById('subcategory');
+  select.innerHTML = '<option value="" disabled selected>Select subcategory</option>';
+
+  const matching = allSubcategories.filter(
+    sub => sub.category_name === selectedCategoryName
+  );
+
+  if (matching.length === 0) {
+    select.innerHTML = '<option value="" disabled selected>No subcategories yet</option>';
+    select.disabled = true;
+    return;
+  }
+
+  matching.forEach((sub) => {
+    const option = document.createElement('option');
+    option.value = sub.name;
+    option.textContent = sub.name;
+    select.appendChild(option);
+  });
+
+  select.disabled = false;
+}
+
+document.getElementById('category').addEventListener('change', (event) => {
+  updateSubcategoryDropdown(event.target.value);
+});
+
+loadCategoryDropdown();
+loadAllSubcategories();
