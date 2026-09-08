@@ -38,10 +38,26 @@ document.getElementById('items-list').addEventListener('click', async (event) =>
   }
 });
 
+let allItems = [];
+
 async function loadItems() {
   const response = await fetch('/api/items');
-  const items = await response.json();
+  allItems = await response.json();
+  applyCurrentFilter();
+}
 
+function applyCurrentFilter() {
+  const selected = document.getElementById('category-filter').value;
+
+  if (selected === 'All') {
+    renderItems(allItems);
+  } else {
+    const filtered = allItems.filter(item => item.category === selected);
+    renderItems(filtered);
+  }
+}
+
+function renderItems(items) {
   const itemsList = document.getElementById('items-list');
   itemsList.innerHTML = '';
 
@@ -61,3 +77,7 @@ async function loadItems() {
 }
 
 loadItems();
+
+document.getElementById('category-filter').addEventListener('change', () => {
+  applyCurrentFilter();
+});
