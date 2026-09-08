@@ -23,6 +23,21 @@ document.getElementById('item-form').addEventListener('submit', async (event) =>
   loadItems();
 });
 
+document.getElementById('items-list').addEventListener('click', async (event) => {
+  if (event.target.classList.contains('delete-btn')) {
+    const id = event.target.dataset.id;
+
+    const response = await fetch(`/api/items/${id}`, {
+      method: 'DELETE'
+    });
+
+    const result = await response.json();
+    console.log(result.message);
+
+    loadItems();
+  }
+});
+
 async function loadItems() {
   const response = await fetch('/api/items');
   const items = await response.json();
@@ -39,6 +54,7 @@ async function loadItems() {
       <td>${item.purchase_date ?? ''}</td>
       <td>${item.purchase_price ?? ''}</td>
       <td>${item.estimated_value ?? ''}</td>
+      <td><button class="delete-btn" data-id="${item.id}">Delete</button></td>
     `;
     itemsList.appendChild(row);
   });

@@ -44,3 +44,18 @@ app.get('/api/items', (req, res) => {
     }
   });
 });
+
+app.delete('/api/items/:id', (req, res) => {
+  const { id } = req.params;
+
+  db.run(`DELETE FROM items WHERE id = ?`, [id], function (err) {
+    if (err) {
+      console.error(err.message);
+      res.status(500).json({ message: 'Failed to delete item.' });
+    } else if (this.changes === 0) {
+      res.status(404).json({ message: 'Item not found.' });
+    } else {
+      res.json({ message: 'Item deleted.' });
+    }
+  });
+});
