@@ -18,8 +18,23 @@
   <div class="content">
     <header>
       <h1>Profile</h1>
-      <p>Welcome to your profile page!</p>
+      <p>Your personal details.</p>
     </header>
+
+    <div id="profile-display" class="profile-card">
+      <p>Loading profile...</p>
+    </div>
+
+    <h2>Edit Profile</h2>
+    <form id="profile-form">
+      <input type="text" id="first-name" placeholder="First Name">
+      <input type="text" id="last-name" placeholder="Last Name">
+      <button type="submit">Save</button>
+    </form>
+
+    <p id="profile-status"></p>
   </div>
+
+  <script src="js/profile.js"></script>
 </body>
 </html>

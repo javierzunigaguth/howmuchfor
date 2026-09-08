@@ -114,3 +114,32 @@ div.content {
   font-weight: bold;
   color: #27ae60;
 }
+
+textarea {
+  width: 100%;
+  max-width: 400px;
+  min-height: 80px;
+  font-family: inherit;
+  padding: 8px;
+}
+
+.profile-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 20px;
+  max-width: 300px;
+}
+
+.profile-icon {
+  font-size: 1.6rem;
+}
+
+.profile-name {
+  font-size: 1.2rem;
+  font-weight: 500;
+}

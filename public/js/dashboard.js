@@ -1,4 +1,14 @@
 async function loadDashboard() {
+  const profileResponse = await fetch('/api/profile');
+  const profile = await profileResponse.json();
+
+  const title = document.getElementById('dashboard-title');
+  if (profile.first_name) {
+    title.textContent = `${profile.first_name}'s Items Overview`;
+  } else {
+    title.textContent = 'Items Overview';
+  }
+
   const [itemsResponse, categoriesResponse] = await Promise.all([
     fetch('/api/items'),
     fetch('/api/categories')

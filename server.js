@@ -180,3 +180,30 @@ app.delete('/api/subcategories/:id', (req, res) => {
     });
   });
 });
+
+app.get('/api/profile', (req, res) => {
+  db.get(`SELECT * FROM profile WHERE id = 1`, [], (err, row) => {
+    if (err) {
+      res.status(500).json({ message: 'Failed to fetch profile.' });
+    } else {
+      res.json(row || {});
+    }
+  });
+});
+
+app.post('/api/profile', (req, res) => {
+  const { first_name, last_name } = req.body;
+
+  db.run(
+    `INSERT INTO profile (id, first_name, last_name) VALUES (1, ?, ?)
+     ON CONFLICT(id) DO UPDATE SET first_name = ?, last_name = ?`,
+    [first_name, last_name, first_name, last_name],
+    (err) => {
+      if (err) {
+        res.status(500).json({ message: 'Failed to save profile.' });
+      } else {
+        res.json({ message: 'Profile saved.' });
+      }
+    }
+  );
+});
