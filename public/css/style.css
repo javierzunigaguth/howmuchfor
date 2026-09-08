@@ -63,3 +63,18 @@ div.content {
   font-size: 2rem;
   margin-top: 8px;
 }
+
+.category-card {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 10px 16px;
+  margin: 6px;
+}
+
+.category-icon {
+  font-size: 1.4rem;
+}

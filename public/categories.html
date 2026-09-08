@@ -19,8 +19,45 @@
   <div class="content">
     <header>
       <h1>Categories</h1>
-      <p>Your tracked categories will show up here.</p>
+      <p>Manage the categories you track items under.</p>
     </header>
+
+    <form id="category-form">
+      <input type="text" id="category-name" placeholder="Category name" required>
+
+      <select id="category-icon" required>
+        <option value="" disabled selected>Choose an icon</option>
+        <option value="🔌">🔌</option>
+        <option value="🛋️">🛋️</option>
+        <option value="🚴">🚴</option>
+        <option value="⌚">⌚</option>
+        <option value="🖼️">🖼️</option>
+        <option value="🌱">🌱</option>
+        <option value="🍽️">🍽️</option>
+        <option value="👕">👕</option>
+        <option value="📚">📚</option>
+        <option value="🧰">🧰</option>
+        <option value="🎸">🎸</option>
+        <option value="🎮">🎮</option>
+        <option value="📷">📷</option>
+        <option value="💍">💍</option>
+        <option value="🧸">🧸</option>
+        <option value="🚗">🚗</option>
+        <option value="🖥️">🖥️</option>
+        <option value="🧴">🧴</option>
+        <option value="🎨">🎨</option>
+        <option value="📦">📦</option>
+      </select>
+
+      <button type="submit">Add Category</button>
+    </form>
+
+    <p id="category-status"></p>
+
+    <h2>Your Categories</h2>
+    <div id="categories-list"></div>
   </div>
+
+  <script src="js/categories.js"></script>
 </body>
 </html>

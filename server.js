@@ -59,3 +59,30 @@ app.delete('/api/items/:id', (req, res) => {
     }
   });
 });
+
+app.get('/api/categories', (req, res) => {
+  db.all(`SELECT * FROM categories`, [], (err, rows) => {
+    if (err) {
+      res.status(500).json({ message: 'Failed to fetch categories.' });
+    } else {
+      res.json(rows);
+    }
+  });
+});
+
+app.post('/api/categories', (req, res) => {
+  const { name, icon } = req.body;
+
+  db.run(
+    `INSERT INTO categories (name, icon) VALUES (?, ?)`,
+    [name, icon],
+    function (err) {
+      if (err) {
+        console.error(err.message);
+        res.status(500).json({ message: 'Failed to add category. It may already exist.' });
+      } else {
+        res.json({ message: `Category "${name}" added.`, id: this.lastID });
+      }
+    }
+  );
+});
