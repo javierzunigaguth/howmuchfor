@@ -20,4 +20,28 @@ document.getElementById('item-form').addEventListener('submit', async (event) =>
   document.getElementById('form-status').textContent = result.message;
 
   document.getElementById('item-form').reset();
+  loadItems();
 });
+
+async function loadItems() {
+  const response = await fetch('/api/items');
+  const items = await response.json();
+
+  const itemsList = document.getElementById('items-list');
+  itemsList.innerHTML = '';
+
+  items.forEach((item) => {
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td>${item.name}</td>
+      <td>${item.category ?? ''}</td>
+      <td>${item.subcategory ?? ''}</td>
+      <td>${item.purchase_date ?? ''}</td>
+      <td>${item.purchase_price ?? ''}</td>
+      <td>${item.estimated_value ?? ''}</td>
+    `;
+    itemsList.appendChild(row);
+  });
+}
+
+loadItems();

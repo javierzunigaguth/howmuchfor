@@ -33,3 +33,14 @@ app.post('/api/items', (req, res) => {
     }
   );
 });
+
+app.get('/api/items', (req, res) => {
+  db.all(`SELECT * FROM items`, [], (err, rows) => {
+    if (err) {
+      console.error(err.message);
+      res.status(500).json({ message: 'Failed to fetch items.' });
+    } else {
+      res.json(rows);
+    }
+  });
+});
