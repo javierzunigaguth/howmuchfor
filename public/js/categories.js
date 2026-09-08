@@ -1,3 +1,6 @@
+let allCategories = [];
+let allSubcategories = [];
+
 async function loadCategories() {
   const response = await fetch('/api/categories');
   allCategories = await response.json();
@@ -10,44 +13,22 @@ async function loadCategories() {
     card.className = 'category-card';
     card.dataset.id = cat.id;
     card.innerHTML = `
-      <span class="category-icon">${cat.icon ?? '📦'}</span>
       <span class="category-name">${cat.name}</span>
       <button class="edit-category-btn" data-id="${cat.id}">Edit</button>
       <button class="delete-category-btn" data-id="${cat.id}">✕</button>
     `;
     list.appendChild(card);
   });
+
+  renderParentCategoryCheckboxes();
 }
 
 function enterCategoryEditMode(card, category) {
   card.innerHTML = `
     <input type="text" class="edit-cat-name" value="${category.name}">
-    <select class="edit-cat-icon">
-      <option value="🔌">🔌</option>
-      <option value="🛋️">🛋️</option>
-      <option value="🚴">🚴</option>
-      <option value="⌚">⌚</option>
-      <option value="🖼️">🖼️</option>
-      <option value="🌱">🌱</option>
-      <option value="🍽️">🍽️</option>
-      <option value="👕">👕</option>
-      <option value="📚">📚</option>
-      <option value="🧰">🧰</option>
-      <option value="🎸">🎸</option>
-      <option value="🎮">🎮</option>
-      <option value="📷">📷</option>
-      <option value="💍">💍</option>
-      <option value="🧸">🧸</option>
-      <option value="🚗">🚗</option>
-      <option value="🖥️">🖥️</option>
-      <option value="🧴">🧴</option>
-      <option value="🎨">🎨</option>
-      <option value="📦">📦</option>
-    </select>
     <button class="save-cat-btn" data-id="${category.id}">Save</button>
     <button class="cancel-cat-btn">Cancel</button>
   `;
-  card.querySelector('.edit-cat-icon').value = category.icon; // pre-select current icon
 }
 
 document.getElementById('categories-list').addEventListener('click', async (event) => {
@@ -59,9 +40,7 @@ document.getElementById('categories-list').addEventListener('click', async (even
     const response = await fetch(`/api/categories/${id}`, { method: 'DELETE' });
     const result = await response.json();
     document.getElementById('category-status').textContent = result.message;
-
     loadCategories();
-    loadParentCategoryDropdown();
   }
 
   if (target.classList.contains('edit-category-btn')) {
@@ -75,8 +54,7 @@ document.getElementById('categories-list').addEventListener('click', async (even
 
   if (target.classList.contains('save-cat-btn')) {
     const updatedCategory = {
-      name: card.querySelector('.edit-cat-name').value,
-      icon: card.querySelector('.edit-cat-icon').value
+      name: card.querySelector('.edit-cat-name').value
     };
 
     const response = await fetch(`/api/categories/${id}`, {
@@ -89,7 +67,6 @@ document.getElementById('categories-list').addEventListener('click', async (even
     document.getElementById('category-status').textContent = result.message;
 
     loadCategories();
-    loadParentCategoryDropdown();
   }
 });
 
@@ -97,8 +74,7 @@ document.getElementById('category-form').addEventListener('submit', async (event
   event.preventDefault();
 
   const newCategory = {
-    name: document.getElementById('category-name').value,
-    icon: document.getElementById('category-icon').value
+    name: document.getElementById('category-name').value
   };
 
   const response = await fetch('/api/categories', {
@@ -114,22 +90,25 @@ document.getElementById('category-form').addEventListener('submit', async (event
   loadCategories();
 });
 
-loadCategories();
+function renderParentCategoryCheckboxes(checkedIds = []) {
+  const container = document.getElementById('parent-category-checkboxes');
+  container.innerHTML = '';
 
-async function loadParentCategoryDropdown() {
-  const response = await fetch('/api/categories');
-  const categories = await response.json();
-
-  const select = document.getElementById('parent-category');
-
-  select.innerHTML = '<option value="" disabled selected>Select parent category</option>';
-
-  categories.forEach((cat) => {
-    const option = document.createElement('option');
-    option.value = cat.id;
-    option.textContent = `${cat.icon ?? ''} ${cat.name}`;
-    select.appendChild(option);
+  allCategories.forEach((cat) => {
+    const label = document.createElement('label');
+    label.className = 'checkbox-label';
+    label.innerHTML = `
+      <input type="checkbox" class="category-checkbox" value="${cat.id}"
+        ${checkedIds.includes(cat.id) ? 'checked' : ''}>
+      ${cat.name}
+    `;
+    container.appendChild(label);
   });
+}
+
+function getCheckedCategoryIds(container) {
+  return Array.from(container.querySelectorAll('.category-checkbox:checked'))
+    .map(checkbox => parseInt(checkbox.value));
 }
 
 async function loadSubcategories() {
@@ -144,8 +123,9 @@ async function loadSubcategories() {
     card.className = 'category-card';
     card.dataset.id = sub.id;
     card.innerHTML = `
+      <span class="category-icon">${sub.icon ?? '📦'}</span>
       <span class="category-name">${sub.name}</span>
-      <span class="subcategory-parent">(${sub.category_name})</span>
+      <span class="subcategory-parent">(${sub.category_names.join(', ') || 'no categories linked'})</span>
       <button class="edit-subcategory-btn" data-id="${sub.id}">Edit</button>
       <button class="delete-subcategory-btn" data-id="${sub.id}">✕</button>
     `;
@@ -154,16 +134,29 @@ async function loadSubcategories() {
 }
 
 function enterSubcategoryEditMode(card, subcategory) {
-  const options = allCategories.map(cat =>
-    `<option value="${cat.id}" ${cat.id === subcategory.category_id ? 'selected' : ''}>${cat.name}</option>`
-  ).join('');
+  const iconOptions = ['🔌','🛋️','🚴','⌚','🖼️','🌱','🍽️','👕','📚','🧰','🎸','🎮','📷','💍','🧸','🚗','🖥️','🧴','🎨','📦']
+    .map(icon => `<option value="${icon}" ${icon === subcategory.icon ? 'selected' : ''}>${icon}</option>`)
+    .join('');
 
   card.innerHTML = `
     <input type="text" class="edit-sub-name" value="${subcategory.name}">
-    <select class="edit-sub-parent">${options}</select>
+    <select class="edit-sub-icon">${iconOptions}</select>
+    <div class="edit-sub-checkboxes"></div>
     <button class="save-sub-btn" data-id="${subcategory.id}">Save</button>
     <button class="cancel-sub-btn">Cancel</button>
   `;
+
+  const checkboxContainer = card.querySelector('.edit-sub-checkboxes');
+  allCategories.forEach((cat) => {
+    const label = document.createElement('label');
+    label.className = 'checkbox-label';
+    label.innerHTML = `
+      <input type="checkbox" class="edit-category-checkbox" value="${cat.id}"
+        ${subcategory.category_ids.includes(cat.id) ? 'checked' : ''}>
+      ${cat.name}
+    `;
+    checkboxContainer.appendChild(label);
+  });
 }
 
 document.getElementById('subcategory-form').addEventListener('submit', async (event) => {
@@ -171,7 +164,8 @@ document.getElementById('subcategory-form').addEventListener('submit', async (ev
 
   const newSubcategory = {
     name: document.getElementById('subcategory-name').value,
-    category_id: document.getElementById('parent-category').value
+    icon: document.getElementById('subcategory-icon').value,
+    category_ids: getCheckedCategoryIds(document.getElementById('parent-category-checkboxes'))
   };
 
   const response = await fetch('/api/subcategories', {
@@ -186,9 +180,6 @@ document.getElementById('subcategory-form').addEventListener('submit', async (ev
   document.getElementById('subcategory-form').reset();
   loadSubcategories();
 });
-
-loadParentCategoryDropdown();
-loadSubcategories();
 
 document.getElementById('subcategories-list').addEventListener('click', async (event) => {
   const target = event.target;
@@ -214,7 +205,9 @@ document.getElementById('subcategories-list').addEventListener('click', async (e
   if (target.classList.contains('save-sub-btn')) {
     const updatedSubcategory = {
       name: card.querySelector('.edit-sub-name').value,
-      category_id: card.querySelector('.edit-sub-parent').value
+      icon: card.querySelector('.edit-sub-icon').value,
+      category_ids: Array.from(card.querySelectorAll('.edit-category-checkbox:checked'))
+        .map(checkbox => parseInt(checkbox.value))
     };
 
     const response = await fetch(`/api/subcategories/${id}`, {
@@ -225,7 +218,9 @@ document.getElementById('subcategories-list').addEventListener('click', async (e
 
     const result = await response.json();
     document.getElementById('subcategory-status').textContent = result.message;
-
     loadSubcategories();
   }
 });
+
+loadCategories();
+loadSubcategories();

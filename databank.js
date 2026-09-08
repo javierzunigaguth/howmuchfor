@@ -20,10 +20,6 @@ db.run(`
   )
 `);
 
-db.run(`DROP TABLE IF EXISTS category_subcategories`);
-db.run(`DROP TABLE IF EXISTS subcategories`);
-db.run(`DROP TABLE IF EXISTS categories`);
-
 db.run(`
   CREATE TABLE IF NOT EXISTS categories (
     id INTEGER PRIMARY KEY AUTOINCREMENT,

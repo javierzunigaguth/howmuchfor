@@ -154,3 +154,9 @@ textarea {
 #pie-chart-card {
   max-width: 300px;
 }
+
+.checkbox-label {
+  display: inline-block;
+  margin-right: 12px;
+  font-weight: normal;
+}

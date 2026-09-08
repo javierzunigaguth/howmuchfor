@@ -128,7 +128,7 @@ function updateSubcategoryDropdown(selectedCategoryName) {
   select.innerHTML = '<option value="" disabled selected>Select subcategory</option>';
 
   const matching = allSubcategories.filter(
-    sub => sub.category_name === selectedCategoryName
+    sub => sub.category_names.includes(selectedCategoryName)
   );
 
   if (matching.length === 0) {
@@ -140,7 +140,7 @@ function updateSubcategoryDropdown(selectedCategoryName) {
   matching.forEach((sub) => {
     const option = document.createElement('option');
     option.value = sub.name;
-    option.textContent = sub.name;
+    option.textContent = `${sub.icon ?? ''} ${sub.name}`;
     select.appendChild(option);
   });
 

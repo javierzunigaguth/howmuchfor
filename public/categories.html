@@ -24,30 +24,6 @@
     <form id="category-form">
       <input type="text" id="category-name" placeholder="Category name" required>
 
-      <select id="category-icon" required>
-        <option value="" disabled selected>Choose an icon</option>
-        <option value="🔌">🔌</option>
-        <option value="🛋️">🛋️</option>
-        <option value="🚴">🚴</option>
-        <option value="⌚">⌚</option>
-        <option value="🖼️">🖼️</option>
-        <option value="🌱">🌱</option>
-        <option value="🍽️">🍽️</option>
-        <option value="👕">👕</option>
-        <option value="📚">📚</option>
-        <option value="🧰">🧰</option>
-        <option value="🎸">🎸</option>
-        <option value="🎮">🎮</option>
-        <option value="📷">📷</option>
-        <option value="💍">💍</option>
-        <option value="🧸">🧸</option>
-        <option value="🚗">🚗</option>
-        <option value="🖥️">🖥️</option>
-        <option value="🧴">🧴</option>
-        <option value="🎨">🎨</option>
-        <option value="📦">📦</option>
-      </select>
-
       <button type="submit">Add Category</button>
     </form>
 
@@ -55,9 +31,33 @@
       <form id="subcategory-form">
         <input type="text" id="subcategory-name" placeholder="Subcategory name" required>
 
-        <select id="parent-category" required>
-          <option value="" disabled selected>Select parent category</option>
+        <select id="subcategory-icon" required>
+          <option value="" disabled selected>Choose an icon</option>
+          <option value="🔌">🔌</option>
+          <option value="🛋️">🛋️</option>
+          <option value="🚴">🚴</option>
+          <option value="⌚">⌚</option>
+          <option value="🖼️">🖼️</option>
+          <option value="🌱">🌱</option>
+          <option value="🍽️">🍽️</option>
+          <option value="👕">👕</option>
+          <option value="📚">📚</option>
+          <option value="🧰">🧰</option>
+          <option value="🎸">🎸</option>
+          <option value="🎮">🎮</option>
+          <option value="📷">📷</option>
+          <option value="💍">💍</option>
+          <option value="🧸">🧸</option>
+          <option value="🚗">🚗</option>
+          <option value="🖥️">🖥️</option>
+          <option value="🧴">🧴</option>
+          <option value="🎨">🎨</option>
+          <option value="📦">📦</option>
         </select>
+
+        <p>Applies to which categories?</p>
+        <div id="parent-category-checkboxes">
+        </div>
 
         <button type="submit">Add Subcategory</button>
       </form>
