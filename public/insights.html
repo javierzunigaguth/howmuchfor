@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>HowMuchFor - Insights</title>
   <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
   <div class="sidebar">
@@ -18,8 +19,21 @@
   <div class="content">
     <header>
       <h1>Insights</h1>
-      <p>Explore insights about your tracked items.</p>
+      <p>A closer look at how your items are performing.</p>
     </header>
+
+    <h2>🏆 Most Valuable Items</h2>
+    <div id="top-items-list"></div>
+
+    <h2>📈 Value Change: Purchase Price vs Estimated Value</h2>
+    <div id="value-change-list"></div>
+
+    <h2>🏠 Value by Category</h2>
+    <div id="catogory-chart-card">
+      <canvas id="catogory-bar-chart"></canvas>
+    </div>
   </div>
+
+  <script src="js/insights.js"></script>
 </body>
 </html>

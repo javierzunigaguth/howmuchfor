@@ -160,3 +160,38 @@ textarea {
   margin-right: 12px;
   font-weight: normal;
 }
+
+.insight-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 10px 16px;
+  margin-bottom: 8px;
+}
+
+.insight-rank {
+  font-weight: bold;
+  color: #888;
+}
+
+.insight-name {
+  font-weight: 500;
+  flex-grow: 1;
+}
+
+.value-gain {
+  color: #27ae60;
+  font-weight: bold;
+}
+
+.value-loss {
+  color: #c0392b;
+  font-weight: bold;
+}
+
+#catogory-chart-card {
+  max-width: 500px;
+}
