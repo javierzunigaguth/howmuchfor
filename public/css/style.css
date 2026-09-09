@@ -336,11 +336,9 @@ form button[type="submit"] {
 
 /* These are the white boxes around the charts. The max-width stops Chart.js from blowing the
    pie up on a wide screen.
-   Careful: the #room-chart-card is not used anymore, it is left over from an older version.
-   And the #category-chart-card is written correctly here, but insights.html uses the wrong
+   The #category-chart-card is written correctly here, but insights.html uses the wrong
    spelling "catogory-chart-card". So the chart in the Insights page gets no box at the moment */
 #pie-chart-card,
-#room-chart-card,
 #category-chart-card {
   background-color: #ffffff;
   border: 1px solid #e6e3d8;
@@ -404,11 +402,4 @@ tbody tr:hover {
   font-size: 0.85rem;
   color: #7a8078;
   margin-bottom: 16px;
-}
-
-/* Orange, so it stands out as a warning.
-   Careful: there is no element with the id "server-status" in any HTML file at the moment */
-#server-status {
-  font-weight: 500;
-  color: #e67e22;
 }
