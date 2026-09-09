@@ -1,3 +1,29 @@
+let allItems = [];
+let allCategories = [];
+let allSubcategories = [];
+
+function formatDateGerman(isoDate) {
+  if (!isoDate) return '';
+  const [year, month, day] = isoDate.split('-');
+  if (!year || !month || !day) return isoDate;
+  return `${day}.${month}.${year}`;
+}
+
+function buildSubcategoryOptions(categoryName, selectedSubcategoryName) {
+  const matching = allSubcategories.filter(
+    sub => sub.category_names.includes(categoryName)
+  );
+
+  if (matching.length === 0) {
+    return '<option value="" disabled selected>No subcategories yet</option>';
+  }
+
+  return matching.map(sub => {
+    const isSelected = sub.name === selectedSubcategoryName ? 'selected' : '';
+    return `<option value="${sub.name}" ${isSelected}>${sub.icon ?? ''} ${sub.name}</option>`;
+  }).join('');
+}
+
 document.getElementById('item-form').addEventListener('submit', async (event) => {
   event.preventDefault();
 
@@ -23,22 +49,55 @@ document.getElementById('item-form').addEventListener('submit', async (event) =>
   loadItems();
 });
 
-document.getElementById('items-list').addEventListener('click', async (event) => {
-  if (event.target.classList.contains('delete-btn')) {
-    const id = event.target.dataset.id;
+async function loadCategoryDropdown() {
+  const response = await fetch('/api/categories');
+  allCategories = await response.json();
 
-    const response = await fetch(`/api/items/${id}`, {
-      method: 'DELETE'
-    });
+  // Add-item form dropdown
+  const select = document.getElementById('category');
+  select.innerHTML = '<option value="" disabled selected>Select category</option>';
+  allCategories.forEach((cat) => {
+    const option = document.createElement('option');
+    option.value = cat.name;
+    option.textContent = `${cat.icon ?? ''} ${cat.name}`;
+    select.appendChild(option);
+  });
 
-    const result = await response.json();
-    console.log(result.message);
-
-    loadItems();
+  const filterSelect = document.getElementById('category-filter');
+  const currentFilterValue = filterSelect.value;
+  filterSelect.innerHTML = '<option value="All">All</option>';
+  allCategories.forEach((cat) => {
+    const option = document.createElement('option');
+    option.value = cat.name;
+    option.textContent = cat.name;
+    filterSelect.appendChild(option);
+  });
+  if ([...filterSelect.options].some(opt => opt.value === currentFilterValue)) {
+    filterSelect.value = currentFilterValue;
   }
+}
+
+async function loadAllSubcategories() {
+  const response = await fetch('/api/subcategories');
+  allSubcategories = await response.json();
+}
+
+function updateSubcategoryDropdown(selectedCategoryName) {
+  const select = document.getElementById('subcategory');
+  select.innerHTML = '<option value="" disabled selected>Select subcategory</option>' +
+    buildSubcategoryOptions(selectedCategoryName, null);
+
+  const hasRealOptions = allSubcategories.some(sub => sub.category_names.includes(selectedCategoryName));
+  select.disabled = !hasRealOptions;
+}
+
+document.getElementById('category').addEventListener('change', (event) => {
+  updateSubcategoryDropdown(event.target.value);
 });
 
-let allItems = [];
+document.getElementById('category-filter').addEventListener('change', () => {
+  applyCurrentFilter();
+});
 
 async function loadItems() {
   const response = await fetch('/api/items');
@@ -68,7 +127,7 @@ function renderItems(items) {
       <td>${item.name}</td>
       <td>${item.category ?? ''}</td>
       <td>${item.subcategory ?? ''}</td>
-      <td>${item.purchase_date ?? ''}</td>
+      <td>${formatDateGerman(item.purchase_date)}</td>
       <td>${item.purchase_price ?? ''}</td>
       <td>${item.estimated_value ?? ''}</td>
       <td>
@@ -80,79 +139,43 @@ function renderItems(items) {
   });
 }
 
+
 function enterEditMode(row, item) {
+  const categoryOptions = allCategories.map(cat => {
+    const isSelected = cat.name === item.category ? 'selected' : '';
+    return `<option value="${cat.name}" ${isSelected}>${cat.icon ?? ''} ${cat.name}</option>`;
+  }).join('');
+
   row.innerHTML = `
     <td><input type="text" class="edit-name" value="${item.name}"></td>
-    <td><input type="text" class="edit-category" value="${item.category ?? ''}"></td>
-    <td><input type="text" class="edit-subcategory" value="${item.subcategory ?? ''}"></td>
+    <td>
+      <select class="edit-category">
+        <option value="" disabled ${!item.category ? 'selected' : ''}>Select category</option>
+        ${categoryOptions}
+      </select>
+    </td>
+    <td>
+      <select class="edit-subcategory">
+        <option value="" disabled ${!item.subcategory ? 'selected' : ''}>Select subcategory</option>
+        ${buildSubcategoryOptions(item.category, item.subcategory)}
+      </select>
+    </td>
     <td><input type="date" class="edit-date" value="${item.purchase_date ?? ''}"></td>
-    <td><input type="number" step="0.01" class="edit-price" value="${item.purchase_price ?? ''}"></td>
-    <td><input type="number" step="0.01" class="edit-value" value="${item.estimated_value ?? ''}"></td>
+    <td><input type="number" step="1" min="0" class="edit-price" value="${item.purchase_price ?? ''}"></td>
+    <td><input type="number" step="1" min="0" class="edit-value" value="${item.estimated_value ?? ''}"></td>
     <td>
       <button class="save-btn" data-id="${item.id}">Save</button>
       <button class="cancel-btn">Cancel</button>
     </td>
   `;
-}
 
-loadItems();
-
-document.getElementById('category-filter').addEventListener('change', () => {
-  applyCurrentFilter();
-});
-
-let allSubcategories = [];
-
-async function loadCategoryDropdown() {
-  const response = await fetch('/api/categories');
-  const categories = await response.json();
-
-  const select = document.getElementById('category');
-  select.innerHTML = '<option value="" disabled selected>Select category</option>';
-
-  categories.forEach((cat) => {
-    const option = document.createElement('option');
-    option.value = cat.name;
-    option.textContent = `${cat.icon ?? ''} ${cat.name}`;
-    select.appendChild(option);
+  row.querySelector('.edit-category').addEventListener('change', (event) => {
+    const subSelect = row.querySelector('.edit-subcategory');
+    subSelect.innerHTML = '<option value="" disabled selected>Select subcategory</option>' +
+      buildSubcategoryOptions(event.target.value, null);
   });
 }
 
-async function loadAllSubcategories() {
-  const response = await fetch('/api/subcategories');
-  allSubcategories = await response.json();
-}
-
-function updateSubcategoryDropdown(selectedCategoryName) {
-  const select = document.getElementById('subcategory');
-  select.innerHTML = '<option value="" disabled selected>Select subcategory</option>';
-
-  const matching = allSubcategories.filter(
-    sub => sub.category_names.includes(selectedCategoryName)
-  );
-
-  if (matching.length === 0) {
-    select.innerHTML = '<option value="" disabled selected>No subcategories yet</option>';
-    select.disabled = true;
-    return;
-  }
-
-  matching.forEach((sub) => {
-    const option = document.createElement('option');
-    option.value = sub.name;
-    option.textContent = `${sub.icon ?? ''} ${sub.name}`;
-    select.appendChild(option);
-  });
-
-  select.disabled = false;
-}
-
-document.getElementById('category').addEventListener('change', (event) => {
-  updateSubcategoryDropdown(event.target.value);
-});
-
-loadCategoryDropdown();
-loadAllSubcategories();
 
 document.getElementById('items-list').addEventListener('click', async (event) => {
   const target = event.target;
@@ -192,3 +215,7 @@ document.getElementById('items-list').addEventListener('click', async (event) =>
     loadItems();
   }
 });
+
+loadCategoryDropdown();
+loadAllSubcategories();
+loadItems();

@@ -1,5 +1,18 @@
 let pieChart;
 
+function formatDateGerman(isoDate) {
+  if (!isoDate) return '';
+  const [year, month, day] = isoDate.split('-');
+  if (!year || !month || !day) return isoDate;
+  return `${day}.${month}.${year}`;
+}
+
+function formatEuro(value) {
+  const num = parseFloat(value);
+  if (isNaN(num)) return '';
+  return `€${num.toFixed(2)}`;
+}
+
 async function loadDashboard() {
   const profileResponse = await fetch('/api/profile');
   const profile = await profileResponse.json();
@@ -23,7 +36,7 @@ async function loadDashboard() {
     const value = parseFloat(item.estimated_value) || 0;
     return sum + value;
   }, 0);
-  document.getElementById('total-value').textContent = `€${total.toFixed(2)}`;
+  document.getElementById('total-value').textContent = formatEuro(total);
 
   const summaryList = document.getElementById('category-summary-list');
   summaryList.innerHTML = '';
@@ -45,7 +58,7 @@ async function loadDashboard() {
       <span class="category-icon">${cat.icon ?? '📦'}</span>
       <span class="category-name">${cat.name}</span>
       <span class="category-count">${itemsInCategory.length} item(s)</span>
-      <span class="category-total">€${categoryTotal.toFixed(2)}</span>
+      <span class="category-total">${formatEuro(categoryTotal)}</span>
     `;
     summaryList.appendChild(row);
 
@@ -66,9 +79,9 @@ async function loadDashboard() {
       <td>${item.name}</td>
       <td>${item.category ?? ''}</td>
       <td>${item.subcategory ?? ''}</td>
-      <td>${item.purchase_date ?? ''}</td>
-      <td>${item.purchase_price ?? ''}</td>
-      <td>${item.estimated_value ?? ''}</td>
+      <td>${formatDateGerman(item.purchase_date)}</td>
+      <td>${formatEuro(item.purchase_price)}</td>
+      <td>${formatEuro(item.estimated_value)}</td>
     `;
     itemsList.appendChild(row);
   });
@@ -94,7 +107,18 @@ function renderPieChart(labels, values) {
       }]
     },
     options: {
-      responsive: true
+      responsive: true,
+      plugins: {
+        tooltip: {
+          callbacks: {
+            label: function (context) {
+              const label = context.label || '';
+              const value = context.parsed || 0;
+              return `${label}: ${formatEuro(value)}`;
+            }
+          }
+        }
+      }
     }
   });
 }

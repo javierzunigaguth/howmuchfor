@@ -32,9 +32,11 @@
         <option value="" disabled selected>Select category first</option>
       </select>
 
+      <div class="form-break"></div>
+
       <input type="date" id="purchase_date">
-      <input type="number" id="purchase_price" placeholder="Purchase price" step="0.01">
-      <input type="number" id="estimated_value" placeholder="Estimated resale value" step="0.01">
+      <input type="number" id="purchase_price" placeholder="Purchase price" step="1" min="0">
+      <input type="number" id="estimated_value" placeholder="Estimated resale value" step="1" min="0">
       <button type="submit">Add Item</button>
     </form>
 
@@ -45,14 +47,6 @@
     <label for="category-filter">Filter by category:</label>
     <select id="category-filter">
       <option value="All">All</option>
-      <option value="Electronics">Electronics</option>
-      <option value="Furniture">Furniture</option>
-      <option value="Sports">Sports</option>
-      <option value="Accessories">Accessories</option>
-      <option value="Decoration">Decoration</option>
-      <option value="Plants">Plants</option>
-      <option value="Tableware">Tableware</option>
-      <option value="Other">Other</option>
     </select>
 
     <table id="items-table">
