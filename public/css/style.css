@@ -1,15 +1,36 @@
+/* This is the stylesheet for all pages. Every HTML file links only this one file */
+
+/* These are the colors used in the whole file:
+   #f7f5ef  page background
+   #f1f1e9  sidebar background
+   #ffffff  cards and forms
+   #1a3c34  dark green, for headlines, main buttons and numbers
+   #1f2a27  normal text
+   #7a8078  grey text, for less important things
+   #e6e3d8  borders
+   #27ae60  green, for a value that went up
+   #c0392b  red, for a value that went down and for delete */
+
+
+/* This resets the spacing the browser adds by itself.
+   The border-box makes padding and border count into the width, so the sidebar keeps its 220px */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
+/* This is the font of the whole page. It uses the font of the operating system, so nothing
+   has to be downloaded */
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   background-color: #f7f5ef;
   color: #1f2a27;
 }
 
+/* This is the menu on the left side. The "fixed" takes it out of the normal flow, that's why
+   the content below needs the same 220px as a margin. If one is changed, the other one has to
+   be changed too */
 .sidebar {
   margin: 0;
   padding: 24px 12px;
@@ -20,6 +41,7 @@ body {
   overflow: auto;
 }
 
+/* The "block" makes the whole row clickable and not only the text itself */
 .sidebar a {
   display: block;
   color: #1f2a27;
@@ -30,20 +52,25 @@ body {
   margin-bottom: 4px;
 }
 
+/* This is the page you are on right now. Every HTML file writes class="active" on its own link */
 .sidebar a.active {
   background-color: #ffffff;
   color: #1a3c34;
 }
 
+/* The :not(.active) stops the hover from painting over the white background of the active link */
 .sidebar a:hover:not(.active) {
   background-color: #e9e7dd;
 }
 
+/* This is the same 220px as the sidebar, so the content starts next to it and not under it */
 div.content {
   margin-left: 220px;
   padding: 32px;
 }
 
+/* This is for tablets and phones. The sidebar becomes a bar above the content and goes back
+   into the normal flow, so the content doesn't need the margin anymore */
 @media screen and (max-width: 700px) {
   .sidebar {
     width: 100%;
@@ -52,6 +79,8 @@ div.content {
     display: flex;
     flex-wrap: wrap;
   }
+
+  /* The links share the row and wrap into a second one if there is no space left */
   .sidebar a {
     flex: 1 1 auto;
     text-align: center;
@@ -59,15 +88,18 @@ div.content {
   }
   div.content { margin-left: 0; padding: 16px; }
 
+  /* The fields go over the full width, next to each other they would be too small here */
   input, select, textarea {
     width: 100%;
   }
 
+  /* This takes back the "margin-left: auto" that pushes the button to the right on the desktop */
   form button[type="submit"] {
     width: 100%;
     margin-left: 0;
   }
 
+  /* This lets the rows wrap instead of squeezing all the columns together */
   .category-summary-row,
   .insight-row,
   .category-card,
@@ -75,11 +107,13 @@ div.content {
     flex-wrap: wrap;
   }
 
+  /* Smaller than the 2.25rem on the desktop, so a long total doesn't run out of the card */
   #total-value {
     font-size: 1.75rem;
   }
 }
 
+/* This is for very small phones */
 @media screen and (max-width: 400px) {
   .sidebar a {
     text-align: center;
@@ -96,15 +130,19 @@ h1 {
   margin-bottom: 4px;
 }
 
+/* This is the small grey line under the h1 of every page */
 header p {
   color: #7a8078;
 }
 
+/* This is for the headlines inside a page. It also hits #total-value in dashboard.html,
+   because that one is an h2. That's why #total-value sets its own size again further down */
 h2 {
   font-size: 1.1rem;
   margin: 24px 0 12px;
 }
 
+/* Every form is a white card and the fields run next to each other */
 form {
   display: flex;
   flex-wrap: wrap;
@@ -117,11 +155,14 @@ form {
   margin-bottom: 16px;
 }
 
+/* This is an empty helper with no height. It forces a line break inside a form.
+   It is used in items.html between the name row and the price row */
 .form-break {
   flex-basis: 100%;
   height: 0;
 }
 
+/* The "inherit" is needed because input fields don't take the font of the body by themselves */
 input, select, textarea {
   font-family: inherit;
   font-size: 0.9rem;
@@ -136,12 +177,14 @@ textarea {
   min-height: 80px;
 }
 
+/* This holds a checkbox and its text together, so the two never end up on different lines */
 .checkbox-label {
   display: inline-block;
   margin-right: 12px;
   font-weight: normal;
 }
 
+/* The see-through border keeps the button the same size as the ones that do have a border */
 button {
   font-family: inherit;
   font-size: 0.9rem;
@@ -151,12 +194,15 @@ button {
   cursor: pointer;
 }
 
+/* This is the main button of a form. The "margin-left: auto" pushes it to the right end of the row */
 form button[type="submit"] {
   background-color: #1a3c34;
   color: white;
   margin-left: auto;
 }
 
+/* These are the buttons inside the rows and cards. There are always three class names, because
+   items, categories and subcategories each use their own name for the same kind of button */
 .save-btn, .save-cat-btn, .save-sub-btn {
   background-color: #1a3c34;
   color: white;
@@ -168,18 +214,26 @@ form button[type="submit"] {
   border-color: #e6e3d8;
 }
 
+/* The grey text makes Cancel look less important than Save */
 .cancel-btn, .cancel-cat-btn, .cancel-sub-btn {
   background-color: #ffffff;
   color: #7a8078;
   border-color: #e6e3d8;
 }
 
+/* Only the text is red and not the whole button, so it warns but doesn't shout */
 .delete-btn, .delete-category-btn, .delete-subcategory-btn {
   background-color: #ffffff;
   color: #c0392b;
   border-color: #e6c6c1;
 }
 
+/* This is the white row that is used on almost every page:
+   .category-card          the category and subcategory lists
+   .insight-row            the rows in the Insights page
+   .category-summary-row   the "By Category" list in the dashboard
+   .profile-card           the profile card
+   All four are built in JavaScript, so these class names have to match the ones in the .js files */
 .category-card,
 .insight-row,
 .category-summary-row,
@@ -194,11 +248,14 @@ form button[type="submit"] {
   margin-bottom: 8px;
 }
 
+/* The icons are only emojis, so they are made a bit bigger with the font size */
 .category-icon,
 .profile-icon {
   font-size: 1.3rem;
 }
 
+/* The "flex-grow: 1" on the name eats the free space and pushes everything after it to the
+   right side. That is what puts the totals and the buttons on the right in every card */
 .category-name,
 .insight-name,
 .profile-name {
@@ -217,6 +274,7 @@ form button[type="submit"] {
   color: #1a3c34;
 }
 
+/* The fixed width makes the #1 to #5 line up in a straight column */
 .insight-rank {
   font-weight: bold;
   color: #7a8078;
@@ -233,6 +291,7 @@ form button[type="submit"] {
   font-size: 0.85rem;
 }
 
+/* These two are set by insights.js, depending on if the value went up or down */
 .value-gain {
   color: #27ae60;
   font-weight: bold;
@@ -243,6 +302,8 @@ form button[type="submit"] {
   font-weight: bold;
 }
 
+/* This puts the total card and the pie chart next to each other.
+   On a small screen the wrap puts them under each other */
 .dashboard-top {
   display: flex;
   gap: 24px;
@@ -250,6 +311,8 @@ form button[type="submit"] {
   margin-bottom: 24px;
 }
 
+/* This is the big dark green card with the total value in it.
+   The "flex: 1 1 260px" lets it grow into the space that is left next to the chart */
 #total-value-card {
   background-color: #1a3c34;
   color: white;
@@ -264,12 +327,18 @@ form button[type="submit"] {
   margin-bottom: 8px;
 }
 
+/* This sets the size again, because the element is an h2 and would be small otherwise */
 #total-value {
   font-size: 2.25rem;
   font-weight: 700;
   color: white;
 }
 
+/* These are the white boxes around the charts. The max-width stops Chart.js from blowing the
+   pie up on a wide screen.
+   Careful: the #room-chart-card is not used anymore, it is left over from an older version.
+   And the #category-chart-card is written correctly here, but insights.html uses the wrong
+   spelling "catogory-chart-card". So the chart in the Insights page gets no box at the moment */
 #pie-chart-card,
 #room-chart-card,
 #category-chart-card {
@@ -281,11 +350,14 @@ form button[type="submit"] {
   max-width: 380px;
 }
 
+/* This makes the table scroll sideways. The item tables have 6 or 7 columns and would be
+   too wide for a phone */
 .table-wrapper {
   overflow-x: auto;
   margin-bottom: 24px;
 }
 
+/* The "collapse" makes two cells share one border instead of drawing two */
 table {
   width: 100%;
   border-collapse: collapse;
@@ -294,6 +366,7 @@ table {
   border-radius: 8px;
 }
 
+/* The wrapper already has the space at the bottom, so the table doesn't need it again */
 .table-wrapper table {
   margin-bottom: 0;
 }
@@ -302,6 +375,7 @@ thead {
   background-color: #f7f5ef;
 }
 
+/* The "left" is needed because the browser puts a th in the middle by itself */
 th {
   text-align: left;
   padding: 12px 16px;
@@ -316,10 +390,13 @@ td {
   font-size: 0.9rem;
 }
 
+/* This marks the row the mouse is on */
 tbody tr:hover {
   background-color: #faf9f5;
 }
 
+/* These are the small status lines under the forms. The JavaScript writes the message of the
+   server into them. They are empty in the HTML, so they take no space until something is written */
 #form-status,
 #category-status,
 #subcategory-status,
@@ -329,6 +406,8 @@ tbody tr:hover {
   margin-bottom: 16px;
 }
 
+/* Orange, so it stands out as a warning.
+   Careful: there is no element with the id "server-status" in any HTML file at the moment */
 #server-status {
   font-weight: 500;
   color: #e67e22;
