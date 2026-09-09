@@ -49,15 +49,40 @@ div.content {
     width: 100%;
     height: auto;
     position: relative;
+    display: flex;
+    flex-wrap: wrap;
   }
-  .sidebar a { float: left; }
+  .sidebar a {
+    flex: 1 1 auto;
+    text-align: center;
+    margin-bottom: 0;
+  }
   div.content { margin-left: 0; padding: 16px; }
+
+  input, select, textarea {
+    width: 100%;
+  }
+
+  form button[type="submit"] {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .category-summary-row,
+  .insight-row,
+  .category-card,
+  .profile-card {
+    flex-wrap: wrap;
+  }
+
+  #total-value {
+    font-size: 1.75rem;
+  }
 }
 
 @media screen and (max-width: 400px) {
   .sidebar a {
     text-align: center;
-    float: none;
   }
 }
 
@@ -256,7 +281,10 @@ form button[type="submit"] {
   max-width: 380px;
 }
 
-/* Tables */
+.table-wrapper {
+  overflow-x: auto;
+  margin-bottom: 24px;
+}
 
 table {
   width: 100%;
@@ -264,7 +292,10 @@ table {
   background-color: #ffffff;
   border: 1px solid #e6e3d8;
   border-radius: 8px;
-  margin-bottom: 24px;
+}
+
+.table-wrapper table {
+  margin-bottom: 0;
 }
 
 thead {
